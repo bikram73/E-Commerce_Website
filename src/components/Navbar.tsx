@@ -15,7 +15,7 @@ export function Navbar() {
           Aurelia Online Market
         </Link>
 
-        <div className="hidden items-center gap-5 text-sm text-zinc-600 dark:text-slate-300 md:flex">
+        <div className="flex items-center gap-4 text-sm text-zinc-600 dark:text-slate-300 md:gap-5">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -31,14 +31,6 @@ export function Navbar() {
             }
           >
             Products
-          </NavLink>
-          <NavLink
-            to="/cart"
-            className={({ isActive }) =>
-              isActive ? 'text-zinc-900 dark:text-slate-50' : 'hover:text-zinc-900 dark:hover:text-slate-50'
-            }
-          >
-            Cart
           </NavLink>
         </div>
 
