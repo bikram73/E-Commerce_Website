@@ -1,73 +1,230 @@
-# React + TypeScript + Vite
+# 🛍️ Modern Minimal E-Commerce Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A premium, responsive e-commerce frontend built with React + TypeScript, powered by the DummyJSON Products API.
 
-Currently, two official plugins are available:
+This project focuses on a clean and elegant shopping experience inspired by modern brands, with smooth UI transitions, strong visual hierarchy, and production-style architecture.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Project Overview
 
-## React Compiler
+The application delivers a complete frontend shopping flow:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Discover products from a real API
+- Search and filter products in real time
+- Open full product details with gallery and specs
+- Add items to cart and manage quantities
+- Save favorites with wishlist interaction
+- Switch between light/dark themes
 
-## Expanding the ESLint configuration
+Design direction:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Minimal, spacious layout
+- Rounded cards and soft surfaces
+- Subtle motion and hover states
+- Mobile-first responsiveness
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🏠 Home Page
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Hero section with premium headline and call-to-action
+- Featured products grid (API powered)
+- Category preview cards
+- Promotional banner section
+- Newsletter subscription block
+
+### 🛒 Products Page
+
+- Sticky search bar
+- Debounced search requests
+- Advanced filters:
+  - Category
+  - Max price
+  - Minimum rating
+  - Discount percentage
+  - In-stock only
+- Sorting options:
+  - Newest
+  - Price low → high
+  - Price high → low
+  - Rating
+  - Discount
+- Pagination controls
+
+### 📦 Product Details Page
+
+- Large image preview + thumbnail gallery
+- Product metadata (brand, rating, stock, discount)
+- Quantity selector
+- Add to cart + Buy now actions
+- Specifications panel
+- Similar products suggestions
+
+### 🧾 Cart Page
+
+- Quantity update controls
+- Remove item actions
+- Empty cart UI state
+- Dynamic price summary:
+  - Subtotal
+  - Discount
+  - Shipping
+  - Final total
+
+### 🔧 Global App Capabilities
+
+- Zustand-based global store for:
+  - Cart
+  - Wishlist
+  - Filters
+  - Search query
+  - Theme state
+- Toast notifications for quick feedback
+- Route-based page architecture
+- Error-safe fallback page (404)
+
+## 🧰 Tech Stack
+
+- ⚛️ React 19
+- 🔷 TypeScript
+- ⚡ Vite
+- 🎨 Tailwind CSS
+- 🧭 React Router DOM
+- 🌐 Axios
+- 🧠 Zustand
+- 🎞️ Framer Motion
+- 🔔 React Hot Toast
+- 🧩 Lucide React (icons)
+
+## 🌍 API Integration
+
+Data source: DummyJSON Products API  
+Base URL: https://dummyjson.com
+
+Used endpoints:
+
+- GET /products
+- GET /products/search?q=term
+- GET /products/:id
+- GET /products/categories
+- GET /products/category/:category
+
+## 🔐 API Key / Environment Variables
+
+This project currently does not require an API key.
+
+- ✅ No auth token required
+- ✅ No .env file required for current DummyJSON usage
+
+If you migrate to a protected/private API in future, create a .env file:
+
+```env
+VITE_API_BASE_URL=https://your-api.com
+VITE_API_KEY=your_secret_key
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then access them with:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```ts
+const baseURL = import.meta.env.VITE_API_BASE_URL
+const apiKey = import.meta.env.VITE_API_KEY
 ```
+
+## 🗂️ Project Structure
+
+```text
+E-Commerce_Website
+├── .gitignore
+├── README.md
+├── index.html
+├── package.json
+├── package-lock.json
+├── tailwind.config.js
+├── postcss.config.js
+├── vite.config.ts
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── public
+│   ├── favicon.svg
+│   └── icons.svg
+└── src
+    ├── App.tsx
+    ├── App.css
+    ├── main.tsx
+    ├── index.css
+    ├── assets
+    │   ├── hero.png
+    │   ├── react.svg
+    │   └── vite.svg
+    ├── components
+    │   ├── FilterSidebar.tsx
+    │   ├── Footer.tsx
+    │   ├── Loader.tsx
+    │   ├── Navbar.tsx
+    │   ├── ProductCard.tsx
+    │   └── SearchBar.tsx
+    ├── hooks
+    │   └── useDebounce.ts
+    ├── layouts
+    │   └── MainLayout.tsx
+    ├── pages
+    │   ├── CartPage.tsx
+    │   ├── HomePage.tsx
+    │   ├── NotFoundPage.tsx
+    │   ├── ProductDetailsPage.tsx
+    │   └── ProductsPage.tsx
+    ├── services
+    │   └── api.ts
+    ├── store
+    │   └── useShopStore.ts
+    ├── types
+    │   └── product.ts
+    └── utils
+        └── format.ts
+```
+
+## ⚙️ Getting Started
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Start development server
+
+```bash
+npm run dev
+```
+
+3. Build for production
+
+```bash
+npm run build
+```
+
+4. Preview production build
+
+```bash
+npm run preview
+```
+
+## 📜 Available Scripts
+
+- npm run dev → Starts Vite development server
+- npm run build → Type checks and builds production bundle
+- npm run preview → Serves the built app locally
+- npm run lint → Runs ESLint checks
+
+## 🚢 Deployment Notes
+
+- Can be deployed to Vercel, Netlify, GitHub Pages, or any static host
+- Configure SPA rewrite rules so client-side routes resolve correctly
+
+## 🛣️ Roadmap Ideas
+
+- Persist cart/wishlist in local storage
+- Add dedicated checkout page with form validation
+- Sync filters/search to URL params
+- Add automated tests for store and page behaviors
+- Add accessibility audits and Lighthouse optimization pass
