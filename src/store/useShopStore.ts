@@ -22,7 +22,8 @@ type CookieCartItem = {
 }
 
 const CART_COOKIE_KEY = 'aurelia_cart'
-const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
+const WISHLIST_COOKIE_KEY = 'aurelia_wishlist'
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 
 function toCookieProduct(product: Product): CookieProduct {
   return {
@@ -110,7 +111,42 @@ function writeCartToCookie(cart: CartItem[]) {
   }))
 
   const encoded = encodeURIComponent(JSON.stringify(compactCart))
-  document.cookie = `${CART_COOKIE_KEY}=${encoded}; path=/; max-age=${CART_COOKIE_MAX_AGE}; SameSite=Lax`
+  document.cookie = `${CART_COOKIE_KEY}=${encoded}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`
+}
+
+function readWishlistFromCookie(): number[] {
+  if (typeof document === 'undefined') {
+    return []
+  }
+
+  const escapedKey = WISHLIST_COOKIE_KEY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escapedKey}=([^;]*)`))
+
+  if (!match) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(decodeURIComponent(match[1])) as unknown
+
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    const sanitized = parsed.filter((id): id is number => typeof id === 'number' && id > 0)
+    return sanitized
+  } catch {
+    return []
+  }
+}
+
+function writeWishlistToCookie(wishlistIds: number[]) {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const encoded = encodeURIComponent(JSON.stringify(wishlistIds))
+  document.cookie = `${WISHLIST_COOKIE_KEY}=${encoded}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax`
 }
 
 type ShopState = {
@@ -142,7 +178,7 @@ const defaultFilters: FilterState = {
 
 export const useShopStore = create<ShopState>((set) => ({
   cart: readCartFromCookie(),
-  wishlistIds: [],
+  wishlistIds: readWishlistFromCookie(),
   searchQuery: '',
   filters: defaultFilters,
   theme: 'light',
@@ -185,10 +221,14 @@ export const useShopStore = create<ShopState>((set) => ({
   toggleWishlist: (productId) =>
     set((state) => {
       const exists = state.wishlistIds.includes(productId)
+      const nextWishlist = exists
+        ? state.wishlistIds.filter((id) => id !== productId)
+        : [...state.wishlistIds, productId]
+
+      writeWishlistToCookie(nextWishlist)
+
       return {
-        wishlistIds: exists
-          ? state.wishlistIds.filter((id) => id !== productId)
-          : [...state.wishlistIds, productId],
+        wishlistIds: nextWishlist,
       }
     }),
   setSearchQuery: (value) => set({ searchQuery: value }),
