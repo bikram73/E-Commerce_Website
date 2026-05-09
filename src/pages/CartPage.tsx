@@ -36,9 +36,15 @@ export function CartPage() {
         <div className="space-y-4">
           {cart.map((item) => (
             <article key={item.product.id} className="flex flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-4 sm:flex-row sm:items-center">
-              <img src={item.product.thumbnail} alt={item.product.title} className="h-28 w-full rounded-2xl object-cover sm:w-36" />
+              <Link to={`/products/${item.product.id}`} className="block sm:w-36">
+                <img src={item.product.thumbnail} alt={item.product.title} className="h-28 w-full rounded-2xl object-cover" />
+              </Link>
               <div className="flex-1 space-y-1">
-                <h2 className="text-lg font-medium text-zinc-900">{item.product.title}</h2>
+                <h2 className="text-lg font-medium text-zinc-900">
+                  <Link to={`/products/${item.product.id}`} className="hover:text-blue-600">
+                    {item.product.title}
+                  </Link>
+                </h2>
                 <p className="text-sm text-zinc-600">{item.product.brand}</p>
                 <p className="font-semibold text-zinc-900">{formatPrice(item.product.price)}</p>
               </div>
