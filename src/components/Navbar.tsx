@@ -52,7 +52,7 @@ export function Navbar() {
             {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </button>
           <Link
-            to="/products"
+            to="/wishlist"
             className="relative rounded-xl border border-zinc-200 bg-zinc-50 p-2 text-zinc-700 transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
           >
             <Heart className="size-4" />

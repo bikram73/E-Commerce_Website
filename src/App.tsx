@@ -8,6 +8,7 @@ import { HomePage } from './pages/HomePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ProductDetailsPage } from './pages/ProductDetailsPage'
 import { ProductsPage } from './pages/ProductsPage'
+import { WishlistPage } from './pages/WishlistPage'
 import { useShopStore } from './store/useShopStore'
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:id" element={<ProductDetailsPage />} />
+          <Route path="wishlist" element={<WishlistPage />} />
           <Route path="cart" element={<CartPage />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="*" element={<NotFoundPage />} />
