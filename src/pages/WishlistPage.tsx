@@ -20,7 +20,7 @@ export function WishlistPage() {
       }
 
       try {
-        const products = await Promise.all(wishlistIds.map((id) => getProductById(id)))
+        const products = await Promise.all(wishlistIds.map((id) => getProductById(String(id))))
         setWishlistProducts(products)
       } catch (error) {
         console.error('Failed to fetch wishlist products:', error)
