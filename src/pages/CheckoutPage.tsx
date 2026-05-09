@@ -1,14 +1,23 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { selectCartTotals, useShopStore } from '../store/useShopStore'
 import { formatPrice } from '../utils/format'
 
 export function CheckoutPage() {
   const cart = useShopStore((state) => state.cart)
   const clearCart = useShopStore((state) => state.clearCart)
-  const totals = selectCartTotals(cart)
+  const removeFromCart = useShopStore((state) => state.removeFromCart)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const selectedItemId = Number(searchParams.get('itemId'))
+  const hasSelectedItem = Number.isFinite(selectedItemId) && selectedItemId > 0
+  const selectedItem = hasSelectedItem
+    ? cart.find((item) => item.product.id === selectedItemId)
+    : undefined
+  const checkoutItems = selectedItem ? [selectedItem] : cart
+  const totals = selectCartTotals(checkoutItems)
 
   const [form, setForm] = useState({
     name: '',
@@ -18,14 +27,20 @@ export function CheckoutPage() {
     paymentMethod: 'card',
   })
 
-  if (cart.length === 0) {
+  if (cart.length === 0 || (hasSelectedItem && !selectedItem)) {
     return <Navigate to="/cart" replace />
   }
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    clearCart()
-    toast.success('Order placed successfully')
+
+    if (selectedItem) {
+      removeFromCart(selectedItem.product.id)
+      toast.success('Item ordered successfully')
+    } else {
+      clearCart()
+      toast.success('Order placed successfully')
+    }
     navigate('/products')
   }
 
@@ -98,7 +113,18 @@ export function CheckoutPage() {
         </form>
 
         <aside className="h-fit space-y-3 rounded-3xl border border-zinc-200 bg-zinc-50 p-6">
-          <h2 className="text-xl font-semibold text-zinc-900">Order Summary</h2>
+          <h2 className="text-xl font-semibold text-zinc-900">
+            {selectedItem ? 'Item Summary' : 'Order Summary'}
+          </h2>
+          <div className="space-y-1 text-sm text-zinc-600">
+            {checkoutItems.map((item) => (
+              <p key={item.product.id} className="flex items-center justify-between">
+                <span className="line-clamp-1 pr-2">{item.product.title} x {item.quantity}</span>
+                <span>{formatPrice(item.product.price * item.quantity)}</span>
+              </p>
+            ))}
+          </div>
+          <div className="border-t border-zinc-200 pt-3" />
           <div className="space-y-2 text-sm text-zinc-600">
             <p className="flex items-center justify-between">
               <span>Subtotal</span>

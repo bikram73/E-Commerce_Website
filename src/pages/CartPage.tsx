@@ -41,6 +41,12 @@ export function CartPage() {
                 <h2 className="text-lg font-medium text-zinc-900">{item.product.title}</h2>
                 <p className="text-sm text-zinc-600">{item.product.brand}</p>
                 <p className="font-semibold text-zinc-900">{formatPrice(item.product.price)}</p>
+                <Link
+                  to={`/checkout?itemId=${item.product.id}`}
+                  className="inline-block text-sm font-medium text-blue-600 hover:text-blue-700"
+                >
+                  Checkout this item
+                </Link>
               </div>
 
               <div className="flex items-center gap-3">
