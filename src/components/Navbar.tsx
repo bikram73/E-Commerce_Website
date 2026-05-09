@@ -12,7 +12,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-zinc-200/70 bg-white/85 backdrop-blur-xl transition-colors dark:border-slate-700/70 dark:bg-slate-900/85">
       <nav className="mx-auto flex w-[92%] max-w-7xl items-center justify-between py-4">
         <Link to="/" className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-slate-100">
-          Monocart
+          Aurelia Online Market
         </Link>
 
         <div className="hidden items-center gap-5 text-sm text-zinc-600 dark:text-slate-300 md:flex">
