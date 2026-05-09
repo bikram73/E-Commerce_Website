@@ -94,9 +94,9 @@ export function CartPage() {
               <span>{formatPrice(totals.total)}</span>
             </p>
           </div>
-          <button type="button" className="w-full rounded-2xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white">
+          <Link to="/checkout" className="block w-full rounded-2xl bg-zinc-900 px-4 py-3 text-center text-sm font-semibold text-white">
             Checkout
-          </button>
+          </Link>
         </aside>
       </div>
     </div>
