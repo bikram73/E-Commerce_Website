@@ -6,8 +6,51 @@ export type CartItem = {
   quantity: number
 }
 
+type CookieProduct = {
+  id: number
+  title: string
+  price: number
+  discountPercentage: number
+  thumbnail: string
+  brand?: string
+  stock: number
+}
+
+type CookieCartItem = {
+  product: CookieProduct
+  quantity: number
+}
+
 const CART_COOKIE_KEY = 'aurelia_cart'
 const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
+
+function toCookieProduct(product: Product): CookieProduct {
+  return {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    discountPercentage: product.discountPercentage,
+    thumbnail: product.thumbnail,
+    brand: product.brand,
+    stock: product.stock,
+  }
+}
+
+function fromCookieProduct(product: CookieProduct): Product {
+  return {
+    id: product.id,
+    title: product.title,
+    description: '',
+    category: '',
+    price: product.price,
+    discountPercentage: product.discountPercentage,
+    rating: 0,
+    stock: product.stock,
+    brand: product.brand,
+    thumbnail: product.thumbnail,
+    images: [product.thumbnail],
+  }
+}
 
 function readCartFromCookie(): CartItem[] {
   if (typeof document === 'undefined') {
@@ -28,19 +71,29 @@ function readCartFromCookie(): CartItem[] {
       return []
     }
 
-    return parsed.filter((item): item is CartItem => {
+    const sanitized = parsed.filter((item): item is CookieCartItem => {
       if (!item || typeof item !== 'object') {
         return false
       }
 
-      const candidate = item as CartItem
+      const candidate = item as CookieCartItem
       return (
         typeof candidate.quantity === 'number' &&
         candidate.quantity > 0 &&
         !!candidate.product &&
-        typeof candidate.product.id === 'number'
+        typeof candidate.product.id === 'number' &&
+        typeof candidate.product.title === 'string' &&
+        typeof candidate.product.price === 'number' &&
+        typeof candidate.product.discountPercentage === 'number' &&
+        typeof candidate.product.thumbnail === 'string' &&
+        typeof candidate.product.stock === 'number'
       )
     })
+
+    return sanitized.map((item) => ({
+      quantity: item.quantity,
+      product: fromCookieProduct(item.product),
+    }))
   } catch {
     return []
   }
@@ -51,7 +104,12 @@ function writeCartToCookie(cart: CartItem[]) {
     return
   }
 
-  const encoded = encodeURIComponent(JSON.stringify(cart))
+  const compactCart: CookieCartItem[] = cart.map((item) => ({
+    quantity: item.quantity,
+    product: toCookieProduct(item.product),
+  }))
+
+  const encoded = encodeURIComponent(JSON.stringify(compactCart))
   document.cookie = `${CART_COOKIE_KEY}=${encoded}; path=/; max-age=${CART_COOKIE_MAX_AGE}; SameSite=Lax`
 }
 
