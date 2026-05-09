@@ -6,6 +6,55 @@ export type CartItem = {
   quantity: number
 }
 
+const CART_COOKIE_KEY = 'aurelia_cart'
+const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
+
+function readCartFromCookie(): CartItem[] {
+  if (typeof document === 'undefined') {
+    return []
+  }
+
+  const escapedKey = CART_COOKIE_KEY.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = document.cookie.match(new RegExp(`(?:^|; )${escapedKey}=([^;]*)`))
+
+  if (!match) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(decodeURIComponent(match[1])) as unknown
+
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    return parsed.filter((item): item is CartItem => {
+      if (!item || typeof item !== 'object') {
+        return false
+      }
+
+      const candidate = item as CartItem
+      return (
+        typeof candidate.quantity === 'number' &&
+        candidate.quantity > 0 &&
+        !!candidate.product &&
+        typeof candidate.product.id === 'number'
+      )
+    })
+  } catch {
+    return []
+  }
+}
+
+function writeCartToCookie(cart: CartItem[]) {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const encoded = encodeURIComponent(JSON.stringify(cart))
+  document.cookie = `${CART_COOKIE_KEY}=${encoded}; path=/; max-age=${CART_COOKIE_MAX_AGE}; SameSite=Lax`
+}
+
 type ShopState = {
   cart: CartItem[]
   wishlistIds: number[]
@@ -34,7 +83,7 @@ const defaultFilters: FilterState = {
 }
 
 export const useShopStore = create<ShopState>((set) => ({
-  cart: [],
+  cart: readCartFromCookie(),
   wishlistIds: [],
   searchQuery: '',
   filters: defaultFilters,
@@ -42,32 +91,39 @@ export const useShopStore = create<ShopState>((set) => ({
   addToCart: (product, quantity = 1) =>
     set((state) => {
       const existing = state.cart.find((item) => item.product.id === product.id)
-
-      if (existing) {
-        return {
-          cart: state.cart.map((item) =>
+      const nextCart = existing
+        ? state.cart.map((item) =>
             item.product.id === product.id
               ? { ...item, quantity: item.quantity + quantity }
               : item,
-          ),
-        }
-      }
+          )
+        : [...state.cart, { product, quantity }]
 
-      return { cart: [...state.cart, { product, quantity }] }
+      writeCartToCookie(nextCart)
+
+      return { cart: nextCart }
     }),
   removeFromCart: (productId) =>
-    set((state) => ({
-      cart: state.cart.filter((item) => item.product.id !== productId),
-    })),
+    set((state) => {
+      const nextCart = state.cart.filter((item) => item.product.id !== productId)
+      writeCartToCookie(nextCart)
+      return { cart: nextCart }
+    }),
   updateQuantity: (productId, quantity) =>
-    set((state) => ({
-      cart: state.cart
+    set((state) => {
+      const nextCart = state.cart
         .map((item) =>
           item.product.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item,
         )
-        .filter((item) => item.quantity > 0),
-    })),
-  clearCart: () => set({ cart: [] }),
+        .filter((item) => item.quantity > 0)
+
+      writeCartToCookie(nextCart)
+      return { cart: nextCart }
+    }),
+  clearCart: () => {
+    writeCartToCookie([])
+    set({ cart: [] })
+  },
   toggleWishlist: (productId) =>
     set((state) => {
       const exists = state.wishlistIds.includes(productId)
