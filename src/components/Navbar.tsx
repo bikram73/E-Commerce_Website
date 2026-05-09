@@ -1,4 +1,4 @@
-import { Heart, Moon, ShoppingCart, Sun } from 'lucide-react'
+import { Heart, Moon, Sun } from 'lucide-react'
 import { Link, NavLink } from 'react-router-dom'
 import { useShopStore } from '../store/useShopStore'
 
@@ -42,6 +42,39 @@ export function Navbar() {
           </NavLink>
         </div>
 
+        <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-slate-300 md:hidden">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? 'rounded px-3 py-1 bg-zinc-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                : 'rounded px-3 py-1 hover:bg-zinc-100 dark:hover:bg-slate-800'
+            }
+          >
+            Home
+          </NavLink>
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              isActive
+                ? 'rounded px-3 py-1 bg-zinc-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                : 'rounded px-3 py-1 hover:bg-zinc-100 dark:hover:bg-slate-800'
+            }
+          >
+            Products
+          </NavLink>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              isActive
+                ? 'rounded px-3 py-1 bg-zinc-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                : 'rounded px-3 py-1 hover:bg-zinc-100 dark:hover:bg-slate-800'
+            }
+          >
+            Cart ({cartCount})
+          </NavLink>
+        </div>
+
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -59,14 +92,6 @@ export function Navbar() {
             {wishlistCount > 0 && (
               <span className="absolute -right-2 -top-2 rounded-full bg-zinc-900 px-1.5 text-[10px] text-white dark:bg-slate-100 dark:text-slate-900">
                 {wishlistCount}
-              </span>
-            )}
-          </Link>
-          <Link to="/cart" className="relative rounded-xl bg-zinc-900 p-2 text-white">
-            <ShoppingCart className="size-4" />
-            {cartCount > 0 && (
-              <span className="absolute -right-2 -top-2 rounded-full bg-blue-600 px-1.5 text-[10px] text-white">
-                {cartCount}
               </span>
             )}
           </Link>
