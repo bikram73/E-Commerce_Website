@@ -221,6 +221,44 @@ npm run preview
 - Can be deployed to Vercel, Netlify, GitHub Pages, or any static host
 - Configure SPA rewrite rules so client-side routes resolve correctly
 
+## 🌐 Deploy To Netlify
+
+This repository is now Netlify-ready via [netlify.toml](netlify.toml).
+
+### Netlify Build Settings
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+
+### SPA Routing Support
+
+React Router paths (for example `/products/12`) are handled by this redirect in `netlify.toml`:
+
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+### Deploy From Netlify UI
+
+1. Open Netlify and click Add new site -> Import an existing project.
+2. Connect your GitHub repo.
+3. Confirm settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+4. Click Deploy site.
+
+### Deploy From Netlify CLI (Optional)
+
+```bash
+npm install -g netlify-cli
+netlify login
+netlify init
+netlify deploy --build --prod
+```
+
 ## 🛣️ Roadmap Ideas
 
 - Persist cart/wishlist in local storage
