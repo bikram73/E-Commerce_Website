@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FilterSidebar } from '../components/FilterSidebar'
 import { Loader } from '../components/Loader'
 import { ProductCard } from '../components/ProductCard'
@@ -22,6 +22,8 @@ export function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const debouncedSearch = useDebounce(searchQuery)
+  const listTopRef = useRef<HTMLDivElement | null>(null)
+  const hasMounted = useRef(false)
 
   useEffect(() => {
     async function bootstrap() {
@@ -110,6 +112,23 @@ export function ProductsPage() {
     }
   }, [page, totalPages])
 
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
+    }
+
+    listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [page])
+
+  const goToPrevPage = () => {
+    setPage((value) => (value === 1 ? totalPages : value - 1))
+  }
+
+  const goToNextPage = () => {
+    setPage((value) => (value === totalPages ? 1 : value + 1))
+  }
+
   return (
     <div className="mx-auto w-[92%] max-w-7xl py-10">
       <div className="sticky top-[73px] z-20 mb-6 rounded-3xl border border-zinc-200 bg-white/90 p-4 backdrop-blur">
@@ -120,7 +139,7 @@ export function ProductsPage() {
         <FilterSidebar filters={filters} categories={categories} onChange={setFilters} onReset={resetFilters} />
 
         <section className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div ref={listTopRef} className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-900">Products</h1>
             <p className="text-sm text-zinc-600">{filtered.length} items</p>
           </div>
@@ -138,8 +157,8 @@ export function ProductsPage() {
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <button
                   type="button"
-                  disabled={page === 1}
-                  onClick={() => setPage((value) => Math.max(1, value - 1))}
+                  disabled={totalPages === 1}
+                  onClick={goToPrevPage}
                   className="rounded-xl border border-zinc-200 px-4 py-2 text-sm disabled:opacity-50"
                 >
                   Prev
@@ -149,8 +168,8 @@ export function ProductsPage() {
                 </span>
                 <button
                   type="button"
-                  disabled={page === totalPages}
-                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                  disabled={totalPages === 1}
+                  onClick={goToNextPage}
                   className="rounded-xl border border-zinc-200 px-4 py-2 text-sm disabled:opacity-50"
                 >
                   Next
