@@ -41,15 +41,9 @@ export function CartPage() {
                 <h2 className="text-lg font-medium text-zinc-900">{item.product.title}</h2>
                 <p className="text-sm text-zinc-600">{item.product.brand}</p>
                 <p className="font-semibold text-zinc-900">{formatPrice(item.product.price)}</p>
-                <Link
-                  to={`/checkout?itemId=${item.product.id}`}
-                  className="inline-block text-sm font-medium text-blue-600 hover:text-blue-700"
-                >
-                  Checkout this item
-                </Link>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-end gap-3">
                 <div className="flex items-center rounded-xl border border-zinc-200">
                   <button
                     type="button"
@@ -67,6 +61,12 @@ export function CartPage() {
                     <Plus className="size-4" />
                   </button>
                 </div>
+                <Link
+                  to={`/checkout?itemId=${item.product.id}`}
+                  className="inline-flex items-center rounded-xl bg-zinc-900 px-3 py-2 text-sm font-semibold text-white"
+                >
+                  Checkout this item
+                </Link>
                 <button
                   type="button"
                   onClick={() => removeFromCart(item.product.id)}
